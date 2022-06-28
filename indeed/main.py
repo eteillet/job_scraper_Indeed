@@ -10,15 +10,34 @@
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
+import urllib
 
-url = 'https://fr.indeed.com/jobs?q=data%20scientist&l=Nantes%20%2844%29&from=searchOnHP'
+# we define the url we want to request (type of job, location ...)
+# we define the element in html code we want (here the 'mosaic-zone-jobcards' id)
+# get the html content of the page ready to parse
+get_options = {'q' : 'data scientist', 'l' : 'Nantes', 'radius' : '25'}
+url = 'https://fr.indeed.com/emplois?' + urllib.parse.urlencode(get_options)
 response = requests.get(url)
 html = response.content
-soup = BeautifulSoup(html, "lxml")
+soup = BeautifulSoup(html, "html.parser")
+jobs_soup = soup.find(id="resultsCol")
+jobs_elem = jobs_soup.find_all('ul', class_='jobsearch-ResultsList')
 
-jobs = soup.find_all("ul", class_="jobsearch-ResultsList")
-job_series = pd.Series(jobs)
-job_series.value_counts()
+cols = []
+extracted_info = []
+
+
+print(jobs_elem)
+
+# extract titles
+# def get_title(job):
+#     title = job.find('h2', class_='title').text.strip()
+#     print(title)
+#     return title
+
 # for job in jobs:
-#     print("---------------\n")
-#     print(job.get_text(strip=True))
+#     get_title(job)
+# extract company name
+
+# extract date
+
