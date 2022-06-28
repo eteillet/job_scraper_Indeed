@@ -1,9 +1,3 @@
-# to start :
-#  - python3 -m venv .venv
-#  - python3 -m pip install beautifulsoup4
-#  - python3 -m pip install requests
-#  - python3 -m pip install lxml
-
 # goal :
 #  - find companies that recruit data scientists in Nantes
 
@@ -63,3 +57,11 @@ for job_elem in job_elems:
     dates.append(date_)
 extracted_info.append(dates)
 print(len(dates), ' DATES : ', dates)
+
+jobs_list = {}
+for i in range(len(cols)):
+    jobs_list[cols[i]] = extracted_info[i]
+
+# save to csv
+j = pd.DataFrame(jobs_list)
+j.to_csv("results.csv")
