@@ -11,6 +11,7 @@ from bs4 import BeautifulSoup
 import requests
 import pandas as pd
 import urllib
+import re
 
 # we define the url we want to request (type of job, location ...)
 # we define the element in html code we want (here the 'mosaic-zone-jobcards' id)
@@ -20,24 +21,33 @@ url = 'https://fr.indeed.com/emplois?' + urllib.parse.urlencode(get_options)
 response = requests.get(url)
 html = response.content
 soup = BeautifulSoup(html, "html.parser")
-jobs_soup = soup.find(id="resultsCol")
-jobs_elem = jobs_soup.find_all('ul', class_='jobsearch-ResultsList')
+job_soup = soup.find(id="resultsCol")
+
+# use of a regex to find all class containing "cardOutline"
+job_elems = job_soup.find_all(class_=re.compile("cardOutline"))
 
 cols = []
 extracted_info = []
 
-
-print(jobs_elem)
-
 # extract titles
-# def get_title(job):
-#     title = job.find('h2', class_='title').text.strip()
-#     print(title)
-#     return title
+titles = []
+cols.append('titles')
+for job_elem in job_elems:
+    title = job_elem.find('a', class_='jcs-JobTitle').text.strip()
+    # print(title)
+    titles.append(title)
+extracted_info.append(titles)
+print(len(titles), ' TITLES : ', titles)
 
-# for job in jobs:
-#     get_title(job)
+
 # extract company name
+companies = []
+cols.append('companies')
+for job_elem in job_elems:
+    company = job_elem.find(class_='companyName').text.strip()
+    companies.append(company)
+extracted_info.append(companies)
+print(len(companies), ' COMPANIES : ', companies)
 
 # extract date
 
