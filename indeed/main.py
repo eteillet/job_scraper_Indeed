@@ -9,6 +9,7 @@ import re
 import datetime
 import os
 
+RESULT_FILE_PATH='results.xlsx'
 
 # we define the url we want to request (type of job, location ...)
 # we define the element in html code we want (here the 'mosaic-zone-jobcards' id)
@@ -23,11 +24,17 @@ def get_context(title, location):
     return job_soup
     
 
-def scrap_job_informations(job_soup):
+def scrap_job_informations(title, job_soup):
     # use of a regex to find all class containing "cardOutline"
     job_elems = job_soup.find_all(class_=re.compile("cardOutline"))
     cols = []
     extracted_info = []
+
+    research = []
+    cols.append('research')
+    for job_elem in job_elems:
+        research.append(title)
+    extracted_info.append(research)
 
     titles = []
     cols.append('titles')
@@ -41,11 +48,11 @@ def scrap_job_informations(job_soup):
         companies.append(get_company(job_elem))
     extracted_info.append(companies)
 
-    dates = []
-    cols.append('date')
+    locations = []
+    cols.append('location')
     for job_elem in job_elems:
-        dates.append(get_date(job_elem))
-    extracted_info.append(dates)
+        locations.append(get_location(job_elem))
+    extracted_info.append(locations)
 
     links = []
     cols.append('link')
@@ -53,6 +60,11 @@ def scrap_job_informations(job_soup):
         links.append(get_link(job_elem))
     extracted_info.append(links)
 
+    dates = []
+    cols.append('date')
+    for job_elem in job_elems:
+        dates.append(get_date(job_elem))
+    extracted_info.append(dates)
 
     jobs_list = {}
     for i in range(len(cols)):
@@ -67,6 +79,10 @@ def get_title(job_elem):
 # extract company name
 def get_company(job_elem):
     return job_elem.find(class_='companyName').text.strip()
+
+# extract exact location
+def get_location(job_elem):
+    return job_elem.find(class_='companyLocation').text.strip()
 
 # extract date
 # on indeed, the dates are of type "il y a x jours", so we need to substract these days from today
@@ -85,17 +101,28 @@ def get_link(job_elem):
 # save to csv
 def save_to_csv(jobs):
     j = pd.DataFrame(jobs)
-    output_path='results.csv'
-    j.to_csv(output_path, mode='a', index=False, header=not os.path.exists(output_path))
+    # j.to_csv(RESULT_FILE_PATH, mode='a', index=False, header=not os.path.exists(RESULT_FILE_PATH))
+    writer = pd.ExcelWriter(RESULT_FILE_PATH, engine='openpyxl')
+    j.to_excel(writer, sheet_name="jobs", startrow=writer.sheets["jobs"].max_row, index=False, header=False)
 
-def scrap_indeed(title, location):
-    soup = get_context(title, location)
-    jobs = scrap_job_informations(soup)
-    save_to_csv(jobs)
+    # with pd.ExcelWriter(RESULT_FILE_PATH, mode='a', engine='openpyxl') as writer:
+    #     j.to_excel(writer, sheet_name="jobs")
+
+
+def scrap_indeed(titles, locations):
+    for title in titles:
+        for location in locations:
+            soup = get_context(title, location)
+            jobs = scrap_job_informations(title, soup)
+            save_to_csv(jobs)
+    # with open(RESULT_FILE_PATH, 'r') as fp:
+    #     print(f"{len(fp.readlines()) - 1} jobs matching with your criteria [details in results.csv]")
 
 if __name__ == "__main__":
     while True:
-        title = input("Enter the job of your dreams :\n\t>> ")
-        location = input("Enter the city/department of your dreams :\n\t>> ")
-        scrap_indeed(title, location)
-
+        titles = input("Enter your dream job list (separate by a comma) :\n\t>> ").split(",")
+        locations = input("Enter the list of your dream locations (separated by a comma) :\n\t>> ").split(",")
+        scrap_indeed(titles, locations)
+        reset = input("Do you wand to reset the results.csv file ?  y/n\n\t>> ")
+        if reset == 'y' and os.path.isfile(RESULT_FILE_PATH):
+            os.remove(RESULT_FILE_PATH)
