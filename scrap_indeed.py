@@ -8,10 +8,14 @@ import os
 
 RESULT_FILE_PATH='results.json'
 
-# we define the url we want to request (type of job, location ...)
-# we define the element in html code we want (here the 'mosaic-zone-jobcards' id)
-# get the html content of the page ready to parse
+# 
+# 
+# 
 def get_context(title, location):
+    """
+    - define the url we want to request (type of job, location ...)
+    - get the html content of the page ready to parse
+    """
     get_options = {'q' : title, 'l' : location}
     url = 'https://fr.indeed.com/emplois?' + urllib.parse.urlencode(get_options)
     response = requests.get(url, headers={"User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0"})
