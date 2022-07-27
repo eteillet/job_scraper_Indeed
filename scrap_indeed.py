@@ -8,9 +8,6 @@ import os
 
 RESULT_FILE_PATH='results.json'
 
-# 
-# 
-# 
 def get_context(title, location):
     """
     - define the url we want to request (type of job, location ...)
@@ -35,9 +32,7 @@ def get_location(job_elem):
 
 # on indeed, the dates are of type "il y a x jours", so we need to substract these days from today
 def get_date(job_elem):
-    """ extract date
-    on indeed, the dates are of type "il y a x jours", so we need to substract these days from today
-    """
+    """ on indeed, the dates are of type "il y a x jours", so we need to substract these days from today """
     date_elem = job_elem.find(class_='date').text.strip()
     numbers_in_job_elem = re.findall(r'-?\d+\.?\d*', str(date_elem))
     days_since_publication = 0
@@ -58,7 +53,7 @@ def extract_job_details(job, job_elem):
     return job
 
 def scrap_job_informations(soup):
-    """ Scraps informations for each job """
+    """ scraps informations for each job """
     data = []
     jobs = soup.find_all(class_=re.compile("cardOutline"))
     for elem in jobs:
