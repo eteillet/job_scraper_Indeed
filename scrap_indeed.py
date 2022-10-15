@@ -15,7 +15,9 @@ def get_context(title, location):
     """
     get_options = {'q' : title, 'l' : location}
     url = 'https://fr.indeed.com/emplois?' + urllib.parse.urlencode(get_options)
-    response = requests.get(url, headers={"User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0"})
+    response = requests.get(url)
+    agent = {"User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0"}
+    response = requests.get(url, headers=agent)
     html = response.content
     soup = BeautifulSoup(html, "html.parser")
     job_soup = soup.find(id="resultsCol")
