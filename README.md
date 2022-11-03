@@ -13,4 +13,5 @@ The goal is to combine my search for an internship and the improvment of my skil
 ### Update:
     - indeed has strengthened its security (403 risk)
     - recently update of robots.txt to limit job scraping
-    - update of this project on another job search website [here](https://github.com/eteillet/job_scraper_Hellowork)
+
+#### >>> update of this project on another job search website [here](https://github.com/eteillet/job_scraper_Hellowork)  !
