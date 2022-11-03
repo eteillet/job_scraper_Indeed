@@ -11,6 +11,6 @@ The goal is to combine my search for an internship and the improvment of my skil
         - BeautifulSoup
         
 ### Update:
-    - indeed has strengthened its security
+    - indeed has strengthened its security (403 risk)
     - recently update of robots.txt to limit job scraping
-    - 403 risk
+    - update of this project on another job search website [here](https://github.com/eteillet/job_scraper_Hellowork)
